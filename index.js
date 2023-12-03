@@ -25,7 +25,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 app.use(cors());
 const openai = new OpenAI({
-  apiKey: "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", // Replace with your OpenAI API key or use process.env.OPENAI_API_KEY
+  apiKey: process.env.OpenAIKey // Replace with your OpenAI API key or use process.env.OPENAI_API_KEY
 });
 io.on("connection", (socket) => {
   console.log(`User connected: ${socket.id}`);
