@@ -10,7 +10,7 @@
 </head>
 <body>
     <h1>OpenAI Chat</h1>
-
+  
     <form id="chatForm">
         <label for="userInput">Enter your message:</label>
         <input type="text" id="userInput" name="userInput" required>
@@ -23,8 +23,11 @@
     <script>
         const socket = io();
 
-        const uuid = "your-unique-uuid"; // Replace with the user's UUID
-
+        const uuid = "<%= uuid %>"; // Replace with the user's UUID
+       
+        socket.on("hello",(arg)=>{
+            console.log(arg);
+        });
         // Join the room with the UUID when the page loads
         socket.emit("joinRoom", uuid);
 

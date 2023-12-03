@@ -4,8 +4,9 @@ const http = require("http");
 const socketIO = require("socket.io");
 const OpenAI = require("openai");
 const cors = require("cors");
-const path = require('path')
-require('dotenv').config()
+const path = require("path");
+const { v4: uuidv4 } = require("uuid");
+require("dotenv").config();
 const app = express();
 const server = http.createServer(app);
 const io = socketIO(server);
@@ -16,19 +17,21 @@ app.set("view engine", "ejs");
 
 // Serve static files from the "public" directory
 app.use(express.static(path.join(__dirname, "public")));
-   console.log(process.env.OpenAIKey);
-app.get("/", (req, res) => {
-  res.render("index");
+const uuid = uuidv4();
+app.get("/test", (req, res) => {
+  res.render("index", { uuid: uuid });
 });
 
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 app.use(cors());
 const openai = new OpenAI({
-  apiKey: process.env.OpenAIKey // Replace with your OpenAI API key or use process.env.OPENAI_API_KEY
+  apiKey: process.env.OpenAIKey, // Replace with your OpenAI API key or use process.env.OPENAI_API_KEY
 });
+
 io.on("connection", (socket) => {
   console.log(`User connected: ${socket.id}`);
+  socket.emit("hello", "world");
 
   socket.on("joinRoom", (uuid) => {
     // Join a room identified by the UUID
