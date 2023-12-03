@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OpenAI Chat</title>
+    <style>
+        /* Add your styles here */
+    </style>
+</head>
+<body>
+    <h1>OpenAI Chat</h1>
+
+    <form id="chatForm">
+        <label for="userInput">Enter your message:</label>
+        <input type="text" id="userInput" name="userInput" required>
+        <button type="submit">Send</button>
+    </form>
+
+    <div id="responseContainer"></div>
+
+    <script src="https://cdn.socket.io/4.0.1/socket.io.min.js"></script>
+    <script>
+        const socket = io();
+
+        const uuid = "your-unique-uuid"; // Replace with the user's UUID
+
+        // Join the room with the UUID when the page loads
+        socket.emit("joinRoom", uuid);
+
+        // Listen for response chunks
+        socket.on("responseChunk", (responseChunk) => {
+            displayResponse(responseChunk);
+        });
+
+        // Listen for the complete response chunks array
+        socket.on("responseChunksComplete", (responseChunks) => {
+            displayResponse(responseChunks.join(""));
+        });
+
+        // Listen for errors
+        socket.on("error", (errorMessage) => {
+            displayError(errorMessage);
+        });
+
+        // Handle form submission
+        document.getElementById("chatForm").addEventListener("submit", function (event) {
+            event.preventDefault();
+
+            const userInput = document.getElementById("userInput").value;
+
+            // Send user input to the server
+            socket.emit("userInput", { uuid, userInput });
+
+            // Clear the input field
+            document.getElementById("userInput").value = "";
+        });
+
+        // Display response in the response container
+        function displayResponse(message) {
+            const responseContainer = document.getElementById("responseContainer");
+            const p = document.createElement("p");
+            p.textContent = message;
+            responseContainer.appendChild(p);
+        }
+
+        // Display error in the response container
+        function displayError(error) {
+            const responseContainer = document.getElementById("responseContainer");
+            const p = document.createElement("p");
+            p.style.color = "red";
+            p.textContent = `Error: ${error}`;
+            responseContainer.appendChild(p);
+        }
+    </script>
+</body>
+</html>
