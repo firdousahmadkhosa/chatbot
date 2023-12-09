@@ -31,7 +31,14 @@ const openai = new OpenAI({
 
 io.on("connection", (socket) => {
   console.log(`User connected: ${socket.id}`);
-  socket.emit("hello", "world");
+  // socket.emit("hello", "world");
+
+  // Send "hello" event every second
+  const sendHelloInterval = setInterval(() => {
+    const currentDate = new Date();
+    const formattedDate = currentDate.toISOString();
+    socket.emit("hello", formattedDate);
+  }, 1000);
 
   socket.on("joinRoom", (uuid) => {
     // Join a room identified by the UUID
